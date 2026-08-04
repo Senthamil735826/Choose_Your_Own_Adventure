@@ -9,9 +9,9 @@ if __package__ in (None, ""):
     if str(project_root) not in sys.path:
         sys.path.insert(0, str(project_root))
 
-from core.config import settings
-from routers import job, story
-from db.database import create_tables
+from backend.core.config import settings
+from backend.routers import job, story
+from backend.db.database import create_tables
 
 create_tables()
 
@@ -37,3 +37,9 @@ app.include_router(job.router, prefix=settings.API_PREFIX)
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
+
+@app.get("/")
+def home():
+    return {
+        "message": "Choose Your Own Adventure API is running 🚀"
+    }
