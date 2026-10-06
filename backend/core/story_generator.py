@@ -1,3 +1,4 @@
+from typing import Any, cast
 from sqlalchemy.orm import Session
 
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -9,9 +10,7 @@ from core.prompts import STORY_PROMPT
 from models.story import Story, StoryNode
 from dotenv import load_dotenv
 
-
 load_dotenv()
-
 
 class StoryGenerator:
 
@@ -87,7 +86,7 @@ class StoryGenerator:
 
         cls._process_story_node(
             db=db,
-            story_id=story_db.id,
+            story_id=cast(int, story_db.id),
             node_data=root_node,
             is_root=True
         )
@@ -130,6 +129,9 @@ class StoryGenerator:
 
                 next_node = option_data.nextNode
 
+                if next_node is None:
+                    continue
+
                 if isinstance(next_node, dict):
                     next_node = StoryNodeLLM.model_validate(next_node)
 
@@ -143,11 +145,11 @@ class StoryGenerator:
                 options_list.append(
                     {
                         "text": option_data.text,
-                        "node_id": child_node.id
+                        "node_id": cast(int, child_node.id)
                     }
                 )
 
-            node.options = options_list
+            node.options = cast(Any, options_list)
             db.flush()
 
         return node
