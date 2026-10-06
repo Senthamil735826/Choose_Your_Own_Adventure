@@ -37,6 +37,9 @@ jobs:
 
       - name: Build frontend
         working-directory: frontend
+        env:
+          # IMPORTANT: Replace the URL below with your actual Vercel backend URL!
+          VITE_API_BASE_URL: https://YOUR-VERCEL-BACKEND.vercel.app/api
         run: npm run build
 
       - name: Setup Pages

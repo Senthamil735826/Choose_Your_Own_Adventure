@@ -1,20 +1,31 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-try:
-    # Local development from project root
-    from backend.core.config import settings
-    from backend.routers import job, story
-    from backend.db.database import create_tables
-except ModuleNotFoundError:
-    # Vercel deployment from backend directory
-    from core.config import settings
-    from routers import job, story
-    from db.database import create_tables
+import sys
+import os
+import types
 
+# Ensure that 'backend' can be imported on Vercel where 'backend' is the root directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if "backend" not in sys.modules:
+    backend_mod = types.ModuleType("backend")
+    backend_mod.__path__ = [current_dir]
+    sys.modules["backend"] = backend_mod
 
-create_tables()
+from backend.core.config import settings
+from backend.routers import job, story
+from backend.db.database import create_tables
 
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        create_tables()
+        print("Database tables created/verified successfully.")
+    except Exception as e:
+        print(f"Error creating database tables: {e}")
+    yield
 
 app = FastAPI(
     title="Choose Your Own Adventure Game API",
@@ -22,6 +33,7 @@ app = FastAPI(
     version="0.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan
 )
 
 

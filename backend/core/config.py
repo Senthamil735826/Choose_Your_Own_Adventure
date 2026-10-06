@@ -38,6 +38,8 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def populate_database_url(self) -> "Settings":
         if self.DATABASE_URL:
+            if self.DATABASE_URL.startswith("postgres://"):
+                self.DATABASE_URL = self.DATABASE_URL.replace("postgres://", "postgresql://", 1)
             return self
 
         db_user = os.getenv("DB_USER")
