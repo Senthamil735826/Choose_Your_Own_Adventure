@@ -5,12 +5,12 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Cookie, Response, BackgroundTasks
 from sqlalchemy.orm import Session
 
-from backend.core.story_generator import StoryGenerator
-from backend.db.database import SessionLocal, get_db
-from backend.models.job import StoryJob
-from backend.models.story import Story, StoryNode
-from backend.schemas.job import StoryJobResponse
-from backend.schemas.story import (
+from core.story_generator import StoryGenerator
+from db.database import SessionLocal, get_db
+from models.job import StoryJob
+from models.story import Story, StoryNode
+from schemas.job import StoryJobResponse
+from schemas.story import (
     CompleteStoryResponse, CompleteStoryNodeResponse, CreateStoryRequest
 )
 

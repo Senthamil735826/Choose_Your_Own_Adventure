@@ -15,5 +15,5 @@ dependencies = [
 ]
 
 [tool.pyrefly]
-search-path = [".."]
+search-path = ["."]
 disable-search-path-heuristics = true

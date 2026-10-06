@@ -2,19 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import sys
-import os
-import types
+from pathlib import Path
 
-# Ensure that 'backend' can be imported on Vercel where 'backend' is the root directory
-current_dir = os.path.dirname(os.path.abspath(__file__))
-if "backend" not in sys.modules:
-    backend_mod = types.ModuleType("backend")
-    backend_mod.__path__ = [current_dir]
-    sys.modules["backend"] = backend_mod
+BACKEND_DIR = Path(__file__).resolve().parent
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
 
-from backend.core.config import settings
-from backend.routers import job, story
-from backend.db.database import create_tables
+from core.config import settings
+from routers import job, story
+from db.database import create_tables
 
 from contextlib import asynccontextmanager
 
@@ -68,7 +64,7 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(
-        "backend.main:app",
+        "main:app",
         host="0.0.0.0",
         port=8000,
         reload=True
